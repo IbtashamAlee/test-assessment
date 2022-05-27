@@ -1,7 +1,7 @@
 import axios from "axios";
 // import auth from "../auth";
 
-axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
+axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('x-auth-token')}`;
 
 class Api {
   execute(url,method, dataObject={}) {
@@ -34,6 +34,7 @@ class Api {
       axios({
         url: url,
         data: data,
+        method: "post",
         headers: {
           'content-type': 'application/json'
         }

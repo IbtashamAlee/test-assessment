@@ -1,7 +1,30 @@
 import React, {useState} from "react";
+import Api from "./generic-services/api";
+import {useDispatch} from "react-redux";
+import {loginUserAction} from "./redux/actions/auth-actions";
 
 export function Login(props) {
   const [isLoginTab, setIsLoginTab] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  let dipatch = useDispatch();
+
+  const login = (e) => {
+    e.preventDefault();
+    Api.post('/v1/user/59b815032f56d305536a5141/customerLogin', {
+      username: email,
+      password: password
+    }).then((res) => {
+      localStorage.setItem('x_auth_token', res.headers.x_auth_token);
+      dipatch(loginUserAction(res.data.data));
+      console.log(res);
+    }).catch(err => {
+      setError(err.response.data.submessage);
+      console.log(err)
+    })
+  }
 
   return (
       <>
@@ -43,7 +66,7 @@ export function Login(props) {
 
               <div className="mt-8">
                 <div className="mt-6">
-                  <form action="#" method="POST" className="space-y-6">
+                  <form onSubmit={login} className="space-y-6">
                     <input
                         id="email"
                         name="email"
@@ -52,6 +75,8 @@ export function Login(props) {
                         autoComplete="email"
                         required
                         className="w-full h-12 rounded-lg border border-slate-200"
+                        value={email}
+                        onChange={e => {setEmail(e.target.value)}}
                     />
                     <input
                         id="password"
@@ -61,7 +86,11 @@ export function Login(props) {
                         autoComplete="current-password"
                         required
                         className="w-full h-12 rounded-lg border border-slate-200"
+                        value={password}
+                        onChange={e => {setPassword(e.target.value)}}
                     />
+
+                    {error && <h4 className={"text-red-500 !mt-2 text-base"}>{error}</h4>}
 
                     <div className="flex items-center justify-end">
                       <a href="#" className="font-medium text-primary">
