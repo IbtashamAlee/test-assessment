@@ -1,7 +1,8 @@
 import React, {useState} from "react";
-import Api from "./generic-services/api";
+import Api from "../generic-services/api";
 import {useDispatch} from "react-redux";
-import {loginUserAction} from "./redux/actions/auth-actions";
+import {loginUserAction} from "../redux/actions/auth-actions";
+import {useNavigate} from 'react-router-dom'
 
 export function Login(props) {
   const [isLoginTab, setIsLoginTab] = useState(true);
@@ -10,6 +11,7 @@ export function Login(props) {
   const [error, setError] = useState('');
 
   let dipatch = useDispatch();
+  let navigate = useNavigate();
 
   const login = (e) => {
     e.preventDefault();
@@ -20,9 +22,11 @@ export function Login(props) {
       localStorage.setItem('x_auth_token', res.headers.x_auth_token);
       dipatch(loginUserAction(res.data.data));
       console.log(res);
+      navigate('/success');
     }).catch(err => {
       setError(err.response.data.submessage);
-      console.log(err)
+      console.log(err);
+      navigate('/fail');
     })
   }
 
